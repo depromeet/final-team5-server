@@ -15,6 +15,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -58,6 +59,13 @@ public class ApiControllerAdvice {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         log.warn("Bad Request Exception", e);
+        return new FailureResponse<>(ResultCode.BAD_REQUEST, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    protected ApiResponse handleMissingRequestHeaderException(MissingRequestHeaderException e) {
+        log.error(e.getMessage(), e);
         return new FailureResponse<>(ResultCode.BAD_REQUEST, e.getMessage());
     }
 
